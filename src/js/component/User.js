@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { PropTypes } from "prop-types";
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
+import { AppContext } from "../contexts/AppContext";
 
 export const User = props => {
+	const context = useContext(AppContext);
 	const history = useHistory();
 	return (
 		<React.Fragment>
@@ -14,15 +17,20 @@ export const User = props => {
 					<input
 						className="form-control"
 						type="input"
-						value={props.username}
-						onChange={e => props.setUsername(e.target.value)}
+						value={context.store.username}
+						onChange={e =>
+							context.actions.setUsername(e.target.value)
+						}
 					/>
 				</div>
 			</div>
 			<div className="row justify-content-center my-4">
 				<button
 					className="btn btn-primary"
-					onClick={e => history.push("/todo-list")}>
+					onClick={e => {
+						console.log(history);
+						history.push("/todo-list");
+					}}>
 					{"Entrar"}
 				</button>
 			</div>
@@ -30,7 +38,4 @@ export const User = props => {
 	);
 };
 
-User.propTypes = {
-	username: PropTypes.string,
-	setUsername: PropTypes.func
-};
+User.propTypes = {};

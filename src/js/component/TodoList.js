@@ -1,69 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { PropTypes } from "prop-types";
 import { Redirect, useHistory } from "react-router";
+import { AppContext } from "../contexts/AppContext";
 
 export const TodoList = props => {
-	const BASE_URL = "https://assets.breatheco.de/apis/fake/todos/user/";
-	const [tasks, setTasks] = useState([]);
+	const { store, actions } = useContext(AppContext);
 	const history = useHistory();
-	const createUser = async () => {
-		let url = BASE_URL + props.username;
-		try {
-			const response = await fetch(url, {
-				method: "POST",
-				body: JSON.stringify([]),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
-			if (response.ok) {
-				return true;
-			}
-		} catch (error) {
-			console.log(error);
-		}
-		return false;
-	};
-
-	const getTasks = async () => {
-		let url = BASE_URL + props.username;
-		try {
-			const response = await fetch(url);
-			if (!response.ok) {
-				const success = await createUser();
-				if (!success) {
-					alert("disculpa, no se creó el usuario.");
-				} else {
-					getTasks();
-				}
-			} else {
-				const body = await response.json();
-				setTasks(body);
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
 
 	useEffect(() => {
-		if (props.username != "") {
-			getTasks();
+		if (store.username != "") {
+			actions.getTasks(store.username);
 		}
-	}, [props.username]);
+	}, [store.username]);
 
 	return (
 		<React.Fragment>
-			{props.username != "" ? (
+			{store.username != "" ? (
 				<React.Fragment>
 					<div className="row justify-content-center">
 						<h1 className="display-1">
-							{"Lista de " + props.username}
+							{"Lista de " + store.username}
 						</h1>
 					</div>
 					<div className="row justify-content-center">
 						<div className="col-10">
 							<ul>
-								{tasks.map((task, index) => (
+								{store.tasks.map((task, index) => (
 									<li className="display-4" key={index}>
 										{task.label}
 									</li>
@@ -86,6 +48,4 @@ export const TodoList = props => {
 	);
 };
 
-TodoList.propTypes = {
-	username: PropTypes.string
-};
+TodoList.propTypes = {};
